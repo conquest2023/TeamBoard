@@ -1,0 +1,35 @@
+package project.TeamBoard.controller;
+
+
+import lombok.RequiredArgsConstructor;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RestController;
+import project.TeamBoard.application.service.UserService;
+import project.TeamBoard.interfaces.dto.SignUpDto;
+import project.TeamBoard.interfaces.mapper.UserMapper;
+
+@RestController
+@RequiredArgsConstructor
+public class UserController {
+
+    private final UserService userService;
+
+//    private final UserMapper userMapper;
+
+
+    @PostMapping("/login")
+    public ResponseEntity<?> login(){
+
+        return ResponseEntity.ok(200);
+    }
+
+
+    @PostMapping("/signup")
+    public ResponseEntity<?> signUp(@RequestBody SignUpDto sign){
+
+//        userService.signUp()
+        return null;
+    }
+}
