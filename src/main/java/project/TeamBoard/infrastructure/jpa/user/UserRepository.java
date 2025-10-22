@@ -6,7 +6,7 @@ import java.util.Optional;
 
 public interface UserRepository {
 
-    Optional<User> findById(String userId);
+    Optional<User> findById(String email);
 
     Optional<User> findByEmail(String email);
 

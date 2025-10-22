@@ -40,4 +40,14 @@ public class User {
 
     private LocalDateTime lastLogin;
 
+
+    public User changeName(String changeName){
+        return User.builder()
+                .email(this.email)
+                .username(changeName)
+                .password(this.password)
+                .updatedAt(LocalDateTime.now())
+                .build();
+    }
+
 }
