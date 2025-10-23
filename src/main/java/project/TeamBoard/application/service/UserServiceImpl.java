@@ -101,7 +101,7 @@ public class UserServiceImpl implements  UserService{
 
     private boolean isLocked(String key) {
         AttemptInfo info = attemptInfoMap.get(key);
-        if (info == null)
+        if (info.lockUntil==null)
             return false;
         Instant now = Instant.now();
         if (info.lockUntil != null && now.isBefore(info.lockUntil))

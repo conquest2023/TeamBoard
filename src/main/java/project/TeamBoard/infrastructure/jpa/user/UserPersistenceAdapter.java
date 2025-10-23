@@ -26,13 +26,15 @@ public class UserPersistenceAdapter implements  UserRepository{
     @Override
     public User save(User user) {
 
-       return repository.save(
-                User.builder()
-                        .username(user.getUsername())
-                        .email(user.getEmail())
-                        .password(user.getPassword())
-                        .lastLogin(LocalDateTime.now())
-                        .build());
+
+            return  null;
+//       return repository.save(
+//                User.builder()
+//                        .username(user.getUsername())
+//                        .email(user.getEmail())
+//                        .password(user.getPassword())
+//                        .lastLogin(LocalDateTime.now())
+//                        .build());
     }
 
     @Override

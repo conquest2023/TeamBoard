@@ -53,10 +53,18 @@ public class TestUser {
         UserRepository repository=new TestPersistenceAdapter();
         UserService userService=new UserServiceImpl(repository);
         repository.save(new User("hi@example.com", "주형", "hash", LocalDateTime.now()));
-        User user = userService.login(new LoginUserCommand("hi@example.com", "hash"));
+        User user = userService.login(new LoginUserCommand("hi@example.com","12","hash"));
+        User user2 = userService.login(new LoginUserCommand("hi@example.com","12","hash"));
+        User user3= userService.login(new LoginUserCommand("hi@example.com","12","hash"));
+        User user4 = userService.login(new LoginUserCommand("hi@example.com","12","hash"));
+        User user5 = userService.login(new LoginUserCommand("hi@example.com","12","hash"));
+        User user6 = userService.login(new LoginUserCommand("hi@example.com","12","hash"));
+
+
+
+
         Assertions.assertThat(user.getEmail()).isEqualTo("hi@example.com");
         Assertions.assertThat(user.getPassword()).isEqualTo("hash");
-
     }
 
 }
