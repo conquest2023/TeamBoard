@@ -19,13 +19,15 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 @Slf4j
-//@Component
+@Component
 public class JwtTokenProvider {
     private  final Key key;
 
     private final Set<String> blacklistedTokens = new HashSet<>();
 
     private final long ACCESS_TOKEN_EXPIRY = 24 * 60 * 60 * 1000;
+
+
     public JwtTokenProvider(@Value("${jwt.secret}") String secretKey) {
         byte[] keyBytes = Decoders.BASE64.decode(secretKey);
         this.key = Keys.hmacShaKeyFor(keyBytes);
@@ -42,16 +44,17 @@ public class JwtTokenProvider {
     }
 
 
-    public JwtToken generateToken(Authentication authentication, String userId) {
-        String authorities = authentication.getAuthorities().stream()
-                .map(GrantedAuthority::getAuthority)
-                .collect(Collectors.joining(","));
+//    Authentication authentication,
+    public JwtToken generateToken(String userId) {
+//        String authorities = authentication.getAuthorities().stream()
+//                .map(GrantedAuthority::getAuthority)
+//                .collect(Collectors.joining(","));
         long now = (new Date()).getTime();
         // Access Token 생성
         String accessToken = Jwts.builder()
                 .setSubject(userId) // "sub"에 userId 저장
-                .claim("username", authentication.getName()) // "username" 클레임에 이름 저장
-                .claim("auth", authorities) // 권한 정보 저장
+//                .claim("username", authentication.getName()) // "username" 클레임에 이름 저장
+//                .claim("auth", authorities) // 권한 정보 저장
 //                .claim("created_at", LocalDate.now().toString())
                 .setIssuedAt(new Date())
                 .setExpiration(new Date(System.currentTimeMillis() + ACCESS_TOKEN_EXPIRY))
@@ -63,12 +66,12 @@ public class JwtTokenProvider {
         String refreshToken= Jwts.builder()
                 .setSubject(userId)
                 .claim("type", "refresh")
-                .claim("username", authentication.getName())
+//                .claim("username", authentication.getName())
                 .setExpiration(refreshTokenExpiresIn)
                 .signWith(key,SignatureAlgorithm.HS256)
                 .compact();
         return JwtToken.builder()
-                .grantType("Bearer")
+//                .grantType("Bearer")
                 .accessToken(accessToken)
                 .refreshToken(refreshToken)
                 .build();

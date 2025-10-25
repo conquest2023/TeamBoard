@@ -2,11 +2,14 @@ package project.TeamBoard.application.service;
 
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import project.TeamBoard.application.command.LoginUserCommand;
+import project.TeamBoard.config.jwt.JwtTokenProvider;
 import project.TeamBoard.domain.user.User;
 import project.TeamBoard.application.command.CreateUserCommand;
 import project.TeamBoard.infrastructure.jpa.user.UserRepository;
+import project.TeamBoard.interfaces.dto.JwtToken;
 import project.TeamBoard.interfaces.session.AttemptInfo;
 
 import java.time.Duration;
@@ -16,17 +19,18 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.concurrent.ConcurrentHashMap;
 
-import static java.awt.SystemColor.WINDOW;
-
 @Service
 @RequiredArgsConstructor
-public class UserServiceImpl implements  UserService{
+public class AuthServiceImpl implements AuthService {
 
     private final UserRepository userRepository;
+
+    private final JwtTokenProvider jwtTokenProvider;
+
+    private final BCryptPasswordEncoder passwordEncoder;
     private static final Duration WINDOW = Duration.ofMinutes(10);
-    private static final int THRESHOLD = 5;
+
     private static final Duration LOCK_DURATION = Duration.ofMinutes(10);
-    private static final Duration MAX_LOCK = Duration.ofHours(24); // (옵션)
 
     private final Map<String, AttemptInfo> attemptInfoMap=new ConcurrentHashMap<>();
 
@@ -39,22 +43,23 @@ public class UserServiceImpl implements  UserService{
         validatePassword(create.rawPassword());
         User user=new User(create.email(),
                 create.username(),
-                create.rawPassword(),
+                passwordEncoder.encode(create.rawPassword()),
                 LocalDateTime.now());
         userRepository.save(user);
         return user;
     }
 
     @Override
-    public User login(LoginUserCommand login) {
+    public JwtToken login(LoginUserCommand login) {
         Optional<User> user = userRepository.findByEmail(login.email());
         registerFailure(login.email()+login.clientIp());
         if (isLocked(login.email()+login.clientIp())){
             throw new RuntimeException("10분간 제한되셨습니다.");
         }
-        if (user.isPresent() && user.get().getPassword().equals(login.rawPassword())){
+        if (user.isPresent() && passwordEncoder.matches(login.rawPassword(),user.get().getPassword())){
             userRepository.save(user.get());
-            return user.get();
+//            jwtTokenProvider.generateToken(login.email());
+            return jwtTokenProvider.generateToken(user.get().getEmail());
         } else{
             throw new RuntimeException("아이디 또는 비밀번호가 일치하지 않습니다.");
         }

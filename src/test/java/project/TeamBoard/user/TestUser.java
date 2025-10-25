@@ -2,19 +2,24 @@ package project.TeamBoard.user;
 
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import project.TeamBoard.application.command.CreateUserCommand;
 import project.TeamBoard.application.command.LoginUserCommand;
-import project.TeamBoard.application.service.UserService;
-import project.TeamBoard.application.service.UserServiceImpl;
+import project.TeamBoard.application.service.AuthService;
+import project.TeamBoard.application.service.AuthServiceImpl;
+import project.TeamBoard.config.jwt.JwtTokenProvider;
 import project.TeamBoard.domain.user.User;
 import project.TeamBoard.infrastructure.jpa.user.UserRepository;
 import project.TeamBoard.infrastructure.jpa.user.test.TestPersistenceAdapter;
+import project.TeamBoard.interfaces.dto.JwtToken;
 
 import java.time.LocalDateTime;
 import java.util.Optional;
 
 @SpringBootTest
+
 public class TestUser {
 
 
@@ -23,7 +28,7 @@ public class TestUser {
     @Test
     void 회원가입(){
 
-        UserService service=new UserServiceImpl(new TestPersistenceAdapter());
+        AuthService service=new AuthServiceImpl(new TestPersistenceAdapter(),new JwtTokenProvider("d1esd"),new BCryptPasswordEncoder());
 
         User user = service.signUp(new CreateUserCommand("hi", "123", "123"));
 
@@ -50,21 +55,14 @@ public class TestUser {
 
     @Test
     void 로그인(){
+
         UserRepository repository=new TestPersistenceAdapter();
-        UserService userService=new UserServiceImpl(repository);
-        repository.save(new User("hi@example.com", "주형", "hash", LocalDateTime.now()));
-        User user = userService.login(new LoginUserCommand("hi@example.com","12","hash"));
-        User user2 = userService.login(new LoginUserCommand("hi@example.com","12","hash"));
-        User user3= userService.login(new LoginUserCommand("hi@example.com","12","hash"));
-        User user4 = userService.login(new LoginUserCommand("hi@example.com","12","hash"));
-        User user5 = userService.login(new LoginUserCommand("hi@example.com","12","hash"));
-        User user6 = userService.login(new LoginUserCommand("hi@example.com","12","hash"));
+        AuthService userService=new AuthServiceImpl(repository,new JwtTokenProvider("6f6bcc816277ce71c79931fdfb820c1926ec0d9bcfdbdff61ff257e5de6fa1c4"),new BCryptPasswordEncoder());
+        User user = userService.signUp(new CreateUserCommand("hi@example.com", "123", "a12345678"));
 
 
-
-
-        Assertions.assertThat(user.getEmail()).isEqualTo("hi@example.com");
-        Assertions.assertThat(user.getPassword()).isEqualTo("hash");
+        JwtToken token = userService.login(new LoginUserCommand("hi@example.com", null, "a12345678"));
+        System.out.println(token.refreshToken());
     }
 
 }

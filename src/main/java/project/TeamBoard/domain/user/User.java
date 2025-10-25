@@ -27,6 +27,8 @@ public class User {
 
     private String email;
 
+    private String grade;
+
 //    private String userId;
 
     private String username;
