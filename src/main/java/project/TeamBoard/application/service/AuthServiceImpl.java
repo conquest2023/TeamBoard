@@ -36,6 +36,11 @@ public class AuthServiceImpl implements AuthService {
 
 
     @Override
+    public User logout(LoginUserCommand login) {
+        return null;
+    }
+
+    @Override
     public User signUp(CreateUserCommand create) {
         if(userRepository.existsByEmail(create.email())){
             throw new RuntimeException("이미 사용 중인 이메일입니다: " + create.email());

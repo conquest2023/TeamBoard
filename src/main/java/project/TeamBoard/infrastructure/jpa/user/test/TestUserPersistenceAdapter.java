@@ -1,20 +1,18 @@
 package project.TeamBoard.infrastructure.jpa.user.test;
 
-import org.springframework.stereotype.Repository;
 import project.TeamBoard.domain.user.User;
 import project.TeamBoard.infrastructure.jpa.user.UserRepository;
 
-import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.concurrent.ConcurrentHashMap;
 
 
-public class TestPersistenceAdapter implements UserRepository {
+public class TestUserPersistenceAdapter implements UserRepository {
 
     private final Map<String, User> store;
 
-    public TestPersistenceAdapter() {
+    public TestUserPersistenceAdapter() {
         this.store = new ConcurrentHashMap<>();
     }
 

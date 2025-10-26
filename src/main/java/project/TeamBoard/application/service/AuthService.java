@@ -8,6 +8,7 @@ import project.TeamBoard.interfaces.dto.JwtToken;
 public interface AuthService {
 
 
+    User logout(LoginUserCommand login);
 
     User signUp(CreateUserCommand create);
 
